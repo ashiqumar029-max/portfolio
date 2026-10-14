@@ -1,43 +1,52 @@
-// Portfolio interactions and quick personalization.
-document.addEventListener('DOMContentLoaded', () => {
-  const menuToggle = document.getElementById('menuToggle');
-  const navLinks = document.getElementById('navLinks');
 
-  if (menuToggle && navLinks) {
-    menuToggle.addEventListener('click', () => {
-      const isOpen = navLinks.classList.toggle('open');
-      menuToggle.setAttribute('aria-expanded', String(isOpen));
-      menuToggle.textContent = isOpen ? '✕' : '☰';
-    });
+const menuToggle = document.querySelector('.menu-toggle');
+const navLinks = document.querySelector('.nav-links');
 
-    navLinks.querySelectorAll('a').forEach(link => {
-      link.addEventListener('click', () => {
-        navLinks.classList.remove('open');
-        menuToggle.setAttribute('aria-expanded', 'false');
-        menuToggle.textContent = '☰';
-      });
-    });
-  }
+// Mobile navigation menu
+menuToggle.addEventListener('click', () => {
+  const isOpen = navLinks.classList.toggle('open');
 
-  const year = document.getElementById('year');
-  if (year) year.textContent = new Date().getFullYear();
-
-  // CHANGE THIS to your real email address before publishing.
-  const email = 'your.email@example.com';
-  const emailLink = document.getElementById('emailLink');
-  if (emailLink) emailLink.href = `mailto:${email}`;
-
-  // Smoothly reveal sections as they enter the viewport.
-  const sections = document.querySelectorAll('.section');
-  if ('IntersectionObserver' in window) {
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('is-visible');
-          observer.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.08 });
-    sections.forEach(section => observer.observe(section));
-  }
+  menuToggle.setAttribute(
+    'aria-expanded',
+    String(isOpen)
+  );
 });
+
+// Close menu when a navigation link is clicked
+navLinks.querySelectorAll('a').forEach((link) => {
+  link.addEventListener('click', () => {
+    navLinks.classList.remove('open');
+    menuToggle.setAttribute('aria-expanded', 'false');
+  });
+});
+
+// Portfolio project filters
+const filterButtons = document.querySelectorAll('.filter');
+const projectCards = document.querySelectorAll('.project-card');
+
+filterButtons.forEach((button) => {
+  button.addEventListener('click', () => {
+    const selectedFilter = button.dataset.filter;
+
+    // Update the active filter button
+    filterButtons.forEach((item) => {
+      item.classList.toggle('active', item === button);
+    });
+
+    // Show matching projects
+    projectCards.forEach((card) => {
+      const category = card.dataset.category;
+
+      card.hidden =
+        selectedFilter !== 'all' &&
+        category !== selectedFilter;
+    });
+  });
+});
+
+// Automatically update the copyright year
+const yearElement = document.getElementById('year');
+
+if (yearElement) {
+  yearElement.textContent = new Date().getFullYear();
+}
